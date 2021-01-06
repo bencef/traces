@@ -20,11 +20,21 @@ impl Vec3 {
         }
     }
 
-    pub fn scale(self: &Self, factor: f64) -> Self {
+    pub fn scale(self: Self, factor: f64) -> Self {
         let e1 = self.e1 * factor;
         let e2 = self.e2 * factor;
         let e3 = self.e3 * factor;
         Vec3 { e1, e2, e3 }
+    }
+
+    pub fn normalized(self: Self) -> Self {
+        let one_over_size = 1f64 / self.size();
+        self.scale(one_over_size)
+    }
+
+    pub fn size(self: &Self) -> f64 {
+        let squared = self.e1 * self.e1 + self.e2 * self.e2 + self.e3 * self.e3;
+        squared.sqrt()
     }
 
     // x, y, z
@@ -59,6 +69,18 @@ impl Add for Vec3 {
         let e1 = self.e1 + other.e1;
         let e2 = self.e2 + other.e2;
         let e3 = self.e3 + other.e3;
+        Vec3 { e1, e2, e3 }
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Self;
+
+    fn sub(self: Self, rhs: Self) -> Self::Output {
+        let e1 = self.e1 - rhs.e1;
+        let e2 = self.e2 - rhs.e2;
+        let e3 = self.e3 - rhs.e3;
+
         Vec3 { e1, e2, e3 }
     }
 }
