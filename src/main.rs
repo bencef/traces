@@ -60,14 +60,13 @@ struct Rect {
 }
 
 struct Ppm {
-    pixels: Vec<Vec<Color>>,
+    pixels: Vec<Color>,
     size: Rect,
 }
 
 impl Ppm {
     pub fn new(size: Rect) -> Self {
-        let line = vec![Color::green(); size.width];
-        let pixels = vec![line; size.height];
+        let pixels = vec![Color::green(); size.height * size.width];
         Ppm { pixels, size }
     }
 
@@ -78,11 +77,9 @@ impl Ppm {
         writer.write_all(b"P3\n")?;
         writeln!(writer, "{} {}", self.size.width, self.size.height)?;
         writer.write_all(b"255\n")?;
-        for line in self.pixels.iter() {
-            for pixel in line.iter() {
-                // TODO: use ray_color
-                pixel.write(writer)?;
-            }
+        for pixel in self.pixels.iter() {
+            // TODO: use ray_color
+            pixel.write(writer)?;
         }
         writer.flush()
     }
