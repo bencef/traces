@@ -2,7 +2,7 @@ use crate::v3::Vec3;
 
 use std::ops::*;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Point3(Vec3);
 
 impl Point3 {
@@ -16,6 +16,14 @@ impl Sub<Vec3> for Point3 {
 
     fn sub(self: Self, rhs: Vec3) -> Self::Output {
         Point3(self.0 - rhs)
+    }
+}
+
+impl Sub for Point3 {
+    type Output = Vec3;
+
+    fn sub(self: Self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
     }
 }
 
