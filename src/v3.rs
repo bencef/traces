@@ -20,6 +20,13 @@ impl Vec3 {
         }
     }
 
+    pub fn scale(self: &Self, factor: f64) -> Self {
+        let e1 = self.e1 * factor;
+        let e2 = self.e2 * factor;
+        let e3 = self.e3 * factor;
+        Vec3 { e1, e2, e3 }
+    }
+
     // x, y, z
     pub fn x(self: &Self) -> f64 {
         self.e1

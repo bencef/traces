@@ -1,3 +1,4 @@
+mod ray;
 mod v3;
 
 #[derive(Clone, Copy)]
