@@ -7,6 +7,20 @@ enum Color {
     Blue,
 }
 
+impl Color {
+    pub fn write<W>(self: Self, writer: &mut W) -> std::io::Result<()>
+    where
+        W: std::io::Write,
+    {
+        let (ir, ig, ib) = match self {
+            Color::Red => (255, 0, 0),
+            Color::Green => (0, 255, 0),
+            Color::Blue => (0, 0, 255),
+        };
+        writeln!(writer, "{} {} {}", ir, ig, ib)
+    }
+}
+
 struct Ppm {
     // TODO: dynamic size
     pixels: [[Color; 256]; 256],
@@ -19,24 +33,23 @@ impl Ppm {
         Ppm { pixels }
     }
 
-    pub fn print(self: &Self) {
-        println!("P3");
-        println!("256 256");
-        println!("255");
+    pub fn write<W>(self: &Self, writer: &mut W) -> std::io::Result<()>
+    where
+        W: std::io::Write,
+    {
+        writer.write_all(b"P3\n")?;
+        writer.write_all(b"256 256\n")?;
+        writer.write_all(b"255\n")?;
         for &line in self.pixels.iter() {
             for &pixel in line.iter() {
-                let (ir, ig, ib) = match pixel {
-                    Color::Red => (255, 0, 0),
-                    Color::Green => (0, 255, 0),
-                    Color::Blue => (0, 0, 255),
-                };
-                println!("{} {} {}", ir, ig, ib);
+                pixel.write(writer)?;
             }
         }
+        writer.flush()
     }
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let ppm = Ppm::new();
-    ppm.print();
+    ppm.write(&mut std::io::stdout())
 }
