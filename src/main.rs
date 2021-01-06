@@ -33,8 +33,8 @@ impl Color {
     }
 
     pub fn scale(self: Self, amount: f64) -> Self {
-        self.0.scale(amount);
-        self
+        let v = self.0.scale(amount);
+        Color(v)
     }
 }
 
