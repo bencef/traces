@@ -1,0 +1,69 @@
+use std::ops::*;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vec3 {
+    e1: f64,
+    e2: f64,
+    e3: f64,
+}
+
+impl Vec3 {
+    pub fn new(e1: f64, e2: f64, e3: f64) -> Self {
+        Vec3 { e1, e2, e3 }
+    }
+
+    pub fn zero() -> Self {
+        Vec3 {
+            e1: 0f64,
+            e2: 0f64,
+            e3: 0f64,
+        }
+    }
+
+    // x, y, z
+    pub fn x(self: &Self) -> f64 {
+        self.e1
+    }
+
+    pub fn y(self: &Self) -> f64 {
+        self.e2
+    }
+
+    pub fn z(self: &Self) -> f64 {
+        self.e3
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Self;
+
+    fn neg(self: Self) -> Self::Output {
+        let e1 = -self.e1;
+        let e2 = -self.e2;
+        let e3 = -self.e3;
+        Vec3 { e1, e2, e3 }
+    }
+}
+
+impl Add for Vec3 {
+    type Output = Self;
+
+    fn add(self: Self, other: Self) -> Self::Output {
+        let e1 = self.e1 + other.e1;
+        let e2 = self.e2 + other.e2;
+        let e3 = self.e3 + other.e3;
+        Vec3 { e1, e2, e3 }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    pub fn negates_add_up_to_zero() {
+        let v = Vec3::new(1f64, 0f64, -1f64);
+        let v_neg = -v.clone();
+        assert_eq!(v + v_neg, Vec3::zero());
+    }
+}
