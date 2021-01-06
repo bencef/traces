@@ -1,23 +1,23 @@
 mod v3;
 
 #[derive(Clone, Copy)]
-enum Color {
-    Red,
-    Green,
-    Blue,
-}
+struct Color(v3::Vec3);
+
+const SCALE_TO_256: f64 = 255.999f64;
 
 impl Color {
-    pub fn write<W>(self: Self, writer: &mut W) -> std::io::Result<()>
+    pub fn write<W>(self: &Self, writer: &mut W) -> std::io::Result<()>
     where
         W: std::io::Write,
     {
-        let (ir, ig, ib) = match self {
-            Color::Red => (255, 0, 0),
-            Color::Green => (0, 255, 0),
-            Color::Blue => (0, 0, 255),
-        };
+        let ir = (self.0.x() * SCALE_TO_256) as u8;
+        let ig = (self.0.y() * SCALE_TO_256) as u8;
+        let ib = (self.0.z() * SCALE_TO_256) as u8;
         writeln!(writer, "{} {} {}", ir, ig, ib)
+    }
+
+    pub fn green() -> Self {
+        Color(v3::Vec3::new(0f64, 1f64, 0f64))
     }
 }
 
@@ -28,7 +28,7 @@ struct Ppm {
 
 impl Ppm {
     pub fn new() -> Self {
-        let line = [Color::Green; 256];
+        let line = [Color::green(); 256];
         let pixels = [line; 256];
         Ppm { pixels }
     }
