@@ -17,29 +17,29 @@ pub struct Rect {
 
 fn ray_color(r: Ray) -> Color {
     let dir = r.dir().normalized();
-    let t = 0.5f64 * (dir.y() + 1f64);
-    let mix_factor_white = 1f64 - t;
+    let t = 0.5 * (dir.y() + 1.0);
+    let mix_factor_white = 1.0 - t;
     let mix_factor_sky = t;
-    mix_factor_white * Color::rgb(1f64, 1f64, 1f64)
-        + mix_factor_sky * Color::rgb(0.5f64, 0.7f64, 1f64)
+    mix_factor_white * Color::rgb(1.0, 1.0, 1.0)
+        + mix_factor_sky * Color::rgb(0.5, 0.7, 1.0)
 }
 
 fn main() -> std::io::Result<()> {
-    const ASPECT_RATIO: f64 = 16f64 / 9f64;
+    const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
 
-    let viewport_height = 2f64;
+    let viewport_height = 2.0;
     let viewport_width = viewport_height * ASPECT_RATIO;
-    let focal_length = 1f64;
+    let focal_length = 1.0;
 
-    let origin = Point3::new(0f64, 0f64, 0f64);
-    let horizontal = Vec3::new(viewport_width, 0f64, 0f64);
-    let vertical = Vec3::new(0f64, viewport_height, 0f64);
+    let origin = Point3::new(0.0, 0.0, 0.0);
+    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
+    let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin
-        - horizontal.scale(0.5f64)
-        - vertical.scale(0.5f64)
-        - Vec3::new(0f64, 0f64, focal_length);
+        - horizontal.scale(0.5)
+        - vertical.scale(0.5)
+        - Vec3::new(0.0, 0.0, focal_length);
     let ppm = Ppm::new(Rect {
         height: IMAGE_HEIGHT,
         width: IMAGE_WIDTH,
