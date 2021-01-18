@@ -20,8 +20,7 @@ fn ray_color(r: Ray) -> Color {
     let t = 0.5 * (dir.y() + 1.0);
     let mix_factor_white = 1.0 - t;
     let mix_factor_sky = t;
-    mix_factor_white * Color::rgb(1.0, 1.0, 1.0)
-        + mix_factor_sky * Color::rgb(0.5, 0.7, 1.0)
+    mix_factor_white * Color::rgb(1.0, 1.0, 1.0) + mix_factor_sky * Color::rgb(0.5, 0.7, 1.0)
 }
 
 fn main() -> std::io::Result<()> {
@@ -36,10 +35,8 @@ fn main() -> std::io::Result<()> {
     let origin = Point3::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin
-        - horizontal.scale(0.5)
-        - vertical.scale(0.5)
-        - Vec3::new(0.0, 0.0, focal_length);
+    let lower_left_corner =
+        origin - horizontal.scale(0.5) - vertical.scale(0.5) - Vec3::new(0.0, 0.0, focal_length);
     let ppm = Ppm::new(Rect {
         height: IMAGE_HEIGHT,
         width: IMAGE_WIDTH,
