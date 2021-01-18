@@ -19,4 +19,8 @@ impl Ray {
     pub fn dir(self: &Self) -> Vec3 {
         self.dir
     }
+
+    pub fn origin(self: &Self) -> Point3 {
+        self.orig
+    }
 }

@@ -15,7 +15,21 @@ pub struct Rect {
     height: usize,
 }
 
+fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> bool {
+    let oc: Vec3 = r.origin().clone() - center;
+    // variables for quadratic equation
+    let a = Vec3::dot(r.dir(), r.dir());
+    let b = 2.0 * Vec3::dot(oc, r.dir());
+    let c = Vec3::dot(oc, oc) - radius * radius;
+    let discriminant = b * b - 4.0 * a * c;
+    // ray intersects sphere
+    discriminant > 0.0
+}
+
 fn ray_color(r: Ray) -> Color {
+    if hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &r) {
+        return Color::rgb(1.0, 0.0, 0.0);
+    }
     let dir = r.dir().normalized();
     let t = 0.5 * (dir.y() + 1.0);
     let mix_factor_white = 1.0 - t;

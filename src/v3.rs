@@ -20,6 +20,10 @@ impl Vec3 {
         }
     }
 
+    pub fn dot(a: Self, b: Self) -> f64 {
+        a.e1 * b.e1 + a.e2 * b.e2 + a.e3 * b.e3
+    }
+
     pub fn scale(self: Self, factor: f64) -> Self {
         let e1 = self.e1 * factor;
         let e2 = self.e2 * factor;
