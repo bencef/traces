@@ -18,7 +18,7 @@ impl Ppm {
         writer.write_all(b"P3\n")?;
         writeln!(writer, "{} {}", self.size.width, self.size.height)?;
         writer.write_all(b"255\n")?;
-        for height in (0..self.size.width).rev() {
+        for height in (0..self.size.height).rev() {
             for width in 0..self.size.width {
                 let color = get_color(Rect { width, height });
                 color.write(writer)?;
