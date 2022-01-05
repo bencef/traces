@@ -21,9 +21,20 @@ impl Ppm {
         for height in (0..self.size.height).rev() {
             for width in 0..self.size.width {
                 let color = get_color(Rect { width, height });
-                color.write(writer)?;
+                write_color(&color, writer)?;
             }
         }
         writer.flush()
     }
+}
+
+fn write_color<W>(color: &Color, writer: &mut W) -> std::io::Result<()>
+where
+    W: std::io::Write,
+{
+    const SCALE_TO_256: f64 = 255.999f64;
+    let ir = (color.r() * SCALE_TO_256) as u8;
+    let ig = (color.g() * SCALE_TO_256) as u8;
+    let ib = (color.b() * SCALE_TO_256) as u8;
+    writeln!(writer, "{} {} {}", ir, ig, ib)
 }

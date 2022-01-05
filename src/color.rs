@@ -3,27 +3,26 @@ use crate::v3::Vec3;
 #[derive(Clone, Copy, Debug)]
 pub struct Color(Vec3);
 
-const SCALE_TO_256: f64 = 255.999f64;
-
 impl Color {
     pub fn rgb(r: f64, g: f64, b: f64) -> Self {
         Color(Vec3::new(r, g, b))
     }
 
-    // TODO: this should be in Ppm
-    pub fn write<W>(self: &Self, writer: &mut W) -> std::io::Result<()>
-    where
-        W: std::io::Write,
-    {
-        let ir = (self.0.x() * SCALE_TO_256) as u8;
-        let ig = (self.0.y() * SCALE_TO_256) as u8;
-        let ib = (self.0.z() * SCALE_TO_256) as u8;
-        writeln!(writer, "{} {} {}", ir, ig, ib)
-    }
-
     pub fn scale(self: Self, amount: f64) -> Self {
         let v = self.0.scale(amount);
         Color(v)
+    }
+
+    pub fn r(&self) -> f64 {
+        self.0.x()
+    }
+
+    pub fn g(&self) -> f64 {
+        self.0.y()
+    }
+
+    pub fn b(&self) -> f64 {
+        self.0.z()
     }
 }
 
