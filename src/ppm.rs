@@ -1,5 +1,5 @@
-use crate::Rect;
 use crate::color::Color;
+use crate::Rect;
 
 pub struct Ppm {
     size: Rect,
