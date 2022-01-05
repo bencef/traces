@@ -8,7 +8,7 @@ impl Color {
         Color(Vec3::new(r, g, b))
     }
 
-    pub fn scale(self: Self, amount: f64) -> Self {
+    pub fn scale(self, amount: f64) -> Self {
         let v = self.0.scale(amount);
         Color(v)
     }
@@ -29,7 +29,7 @@ impl Color {
 impl std::ops::Mul<Color> for f64 {
     type Output = Color;
 
-    fn mul(self: Self, rhs: Color) -> Self::Output {
+    fn mul(self, rhs: Color) -> Self::Output {
         rhs.scale(self)
     }
 }
@@ -37,7 +37,7 @@ impl std::ops::Mul<Color> for f64 {
 impl std::ops::Add for Color {
     type Output = Self;
 
-    fn add(self: Self, rhs: Self) -> Self::Output {
+    fn add(self, rhs: Self) -> Self::Output {
         Color(self.0 + rhs.0)
     }
 }

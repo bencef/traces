@@ -24,33 +24,33 @@ impl Vec3 {
         a.e1 * b.e1 + a.e2 * b.e2 + a.e3 * b.e3
     }
 
-    pub fn scale(self: Self, factor: f64) -> Self {
+    pub fn scale(self, factor: f64) -> Self {
         let e1 = self.e1 * factor;
         let e2 = self.e2 * factor;
         let e3 = self.e3 * factor;
         Vec3 { e1, e2, e3 }
     }
 
-    pub fn normalized(self: Self) -> Self {
+    pub fn normalized(self) -> Self {
         let one_over_size = 1f64 / self.size();
         self.scale(one_over_size)
     }
 
-    pub fn size(self: &Self) -> f64 {
+    pub fn size(self) -> f64 {
         let squared = self.e1 * self.e1 + self.e2 * self.e2 + self.e3 * self.e3;
         squared.sqrt()
     }
 
     // x, y, z
-    pub fn x(self: &Self) -> f64 {
+    pub fn x(&self) -> f64 {
         self.e1
     }
 
-    pub fn y(self: &Self) -> f64 {
+    pub fn y(&self) -> f64 {
         self.e2
     }
 
-    pub fn z(self: &Self) -> f64 {
+    pub fn z(&self) -> f64 {
         self.e3
     }
 }
@@ -58,7 +58,7 @@ impl Vec3 {
 impl Neg for Vec3 {
     type Output = Self;
 
-    fn neg(self: Self) -> Self::Output {
+    fn neg(self) -> Self::Output {
         let e1 = -self.e1;
         let e2 = -self.e2;
         let e3 = -self.e3;
@@ -69,7 +69,7 @@ impl Neg for Vec3 {
 impl Add for Vec3 {
     type Output = Self;
 
-    fn add(self: Self, other: Self) -> Self::Output {
+    fn add(self, other: Self) -> Self::Output {
         let e1 = self.e1 + other.e1;
         let e2 = self.e2 + other.e2;
         let e3 = self.e3 + other.e3;
@@ -80,7 +80,7 @@ impl Add for Vec3 {
 impl Sub for Vec3 {
     type Output = Self;
 
-    fn sub(self: Self, rhs: Self) -> Self::Output {
+    fn sub(self, rhs: Self) -> Self::Output {
         let e1 = self.e1 - rhs.e1;
         let e2 = self.e2 - rhs.e2;
         let e3 = self.e3 - rhs.e3;

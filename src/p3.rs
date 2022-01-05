@@ -14,7 +14,7 @@ impl Point3 {
 impl Sub<Vec3> for Point3 {
     type Output = Self;
 
-    fn sub(self: Self, rhs: Vec3) -> Self::Output {
+    fn sub(self, rhs: Vec3) -> Self::Output {
         Point3(self.0 - rhs)
     }
 }
@@ -22,7 +22,7 @@ impl Sub<Vec3> for Point3 {
 impl Sub for Point3 {
     type Output = Vec3;
 
-    fn sub(self: Self, rhs: Self) -> Self::Output {
+    fn sub(self, rhs: Self) -> Self::Output {
         self.0 - rhs.0
     }
 }
@@ -30,7 +30,7 @@ impl Sub for Point3 {
 impl Add<Vec3> for Point3 {
     type Output = Self;
 
-    fn add(self: Self, rhs: Vec3) -> Self::Output {
+    fn add(self, rhs: Vec3) -> Self::Output {
         Point3(self.0 + rhs)
     }
 }

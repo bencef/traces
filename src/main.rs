@@ -16,7 +16,7 @@ pub struct Rect {
 }
 
 fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> bool {
-    let oc: Vec3 = r.origin().clone() - center;
+    let oc: Vec3 = r.origin() - center;
     // variables for quadratic equation
     let a = Vec3::dot(r.dir(), r.dir());
     let b = 2.0 * Vec3::dot(oc, r.dir());

@@ -10,7 +10,7 @@ impl Ppm {
         Ppm { size }
     }
 
-    pub fn write<W, F>(self: &Self, writer: &mut W, get_color: F) -> std::io::Result<()>
+    pub fn write<W, F>(&self, writer: &mut W, get_color: F) -> std::io::Result<()>
     where
         W: std::io::Write,
         F: Fn(Rect) -> Color,

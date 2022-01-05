@@ -12,15 +12,15 @@ impl Ray {
         Ray { orig, dir }
     }
 
-    pub fn at(self: &Self, t: f64) -> Point3 {
+    pub fn at(&self, t: f64) -> Point3 {
         self.orig + self.dir.scale(t)
     }
 
-    pub fn dir(self: &Self) -> Vec3 {
+    pub fn dir(&self) -> Vec3 {
         self.dir
     }
 
-    pub fn origin(self: &Self) -> Point3 {
+    pub fn origin(&self) -> Point3 {
         self.orig
     }
 }
