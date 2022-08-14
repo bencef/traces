@@ -1,7 +1,7 @@
 use crate::{Point3, Ray, Vec3};
 
-mod sphere;
-mod list;
+pub mod sphere;
+pub mod list;
 
 pub struct HitRecord {
     point: Point3,
@@ -13,7 +13,8 @@ pub struct HitRecord {
 impl HitRecord {
     pub fn new(ray: &Ray, normal: Vec3, scale: f64) -> Self {
         let point = ray.at(scale);
-        let front_face = Vec3::dot(ray.dir(), ray.dir()) < 0.0;
+        // BUG: Book says this should be less than 0
+        let front_face = Vec3::dot(ray.dir(), ray.dir()) > 0.0;
         let normal = if front_face {
             normal
         } else {
@@ -25,6 +26,10 @@ impl HitRecord {
             scale,
             front_face,
         }
+    }
+
+    pub(crate) fn normal(&self) -> Vec3 {
+        self.normal
     }
 }
 
