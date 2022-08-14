@@ -10,6 +10,7 @@ use color::Color;
 use hittable::Hittable;
 use p3::Point3;
 use ppm::Ppm;
+use rand::Rng;
 use ray::Ray;
 use std::{f64::INFINITY, rc::Rc};
 use v3::Vec3;
@@ -50,11 +51,13 @@ fn main() -> std::io::Result<()> {
         height: IMAGE_HEIGHT,
         width: IMAGE_WIDTH,
     });
+
     let color_for_position = move |Rect { width, height }| {
+        let mut rng = rand::thread_rng();
         let mut color = Color::rgb(0.0, 0.0, 0.0);
         for _sample_number in 1..SAMPLE_PER_PIXEL {
-            let u = (width) as f64 / (IMAGE_WIDTH - 1) as f64;
-            let v = height as f64 / (IMAGE_HEIGHT - 1) as f64;
+            let u = (width as f64 + rng.gen::<f64>()) / (IMAGE_WIDTH - 1) as f64;
+            let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
             let dir = camera.dir(u, v);
             let r = Ray::new(camera.origin(), dir);
             color += ray_color(r, &world);
