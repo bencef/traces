@@ -36,10 +36,15 @@ fn ray_color(r: Ray, world: &dyn Hittable) -> Color {
     mix_factor_white * Color::rgb(1.0, 1.0, 1.0) + mix_factor_sky * Color::rgb(0.5, 0.7, 1.0)
 }
 
+#[cfg(debug_assertions)]
+const SAMPLE_PER_PIXEL: usize = 10;
+
+#[cfg(not(debug_assertions))]
+const SAMPLE_PER_PIXEL: usize = 100;
+
 fn main() -> std::io::Result<()> {
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
-    const SAMPLE_PER_PIXEL: usize = 100;
 
     let camera = Camera::new();
 
@@ -51,6 +56,8 @@ fn main() -> std::io::Result<()> {
         height: IMAGE_HEIGHT,
         width: IMAGE_WIDTH,
     });
+
+    eprintln!("Using samples per pixel: {}", SAMPLE_PER_PIXEL);
 
     let color_for_position = move |Rect { width, height }| {
         let mut rng = rand::thread_rng();
