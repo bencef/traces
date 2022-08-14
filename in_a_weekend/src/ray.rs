@@ -12,10 +12,6 @@ impl Ray {
         Ray { orig, dir }
     }
 
-    pub fn at(&self, t: f64) -> Point3 {
-        self.orig + self.dir.scale(t)
-    }
-
     pub fn dir(&self) -> Vec3 {
         self.dir
     }

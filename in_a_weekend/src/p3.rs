@@ -7,7 +7,11 @@ pub struct Point3(Vec3);
 
 impl Point3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Point3(Vec3::new(x, y, z))
+        Self(Vec3::new(x, y, z))
+    }
+
+    pub fn zero() -> Self {
+        Self(Vec3::zero())
     }
 }
 
