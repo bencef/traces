@@ -96,10 +96,14 @@ impl Sub for Vec3 {
 
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, rhs: Self) {
-        self.e1 += rhs.e1;
-        self.e2 += rhs.e2;
-        self.e3 += rhs.e3;
+        self.e1 += fix_nan(rhs.e1);
+        self.e2 += fix_nan(rhs.e2);
+        self.e3 += fix_nan(rhs.e3);
     }
+}
+
+fn fix_nan(v: f64) -> f64 {
+    if v.is_nan() {0.0} else {v}
 }
 
 impl From<Point3> for Vec3 {
@@ -122,5 +126,13 @@ mod test {
         let v = Vec3::new(1f64, 0f64, -1f64);
         let v_neg = -v.clone();
         assert_eq!(v + v_neg, Vec3::zero());
+    }
+
+    #[test]
+    pub fn accummulating_nan_doesnt_kill() {
+        let mut v = Vec3::zero();
+        let with_nan = Vec3::new(f64::NAN, 0.0, 0.0);
+        v += with_nan;
+        assert_eq!(v.x(), 0.0);
     }
 }
