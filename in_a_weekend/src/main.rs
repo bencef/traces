@@ -1,3 +1,4 @@
+mod camera;
 mod color;
 mod hittable;
 mod p3;
@@ -13,7 +14,7 @@ use ray::Ray;
 use std::{f64::INFINITY, rc::Rc};
 use v3::Vec3;
 
-use crate::hittable::{list::HittableList, sphere::Sphere};
+use crate::{camera::Camera, hittable::{list::HittableList, sphere::Sphere}};
 
 pub struct Rect {
     width: usize,
@@ -32,19 +33,10 @@ fn ray_color(r: Ray, world: &dyn Hittable) -> Color {
 }
 
 fn main() -> std::io::Result<()> {
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
-    const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
+    const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
 
-    let viewport_height = 2.0;
-    let viewport_width = viewport_height * ASPECT_RATIO;
-    let focal_length = 1.0;
-
-    let origin = Point3::zero();
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal.scale(0.5) - vertical.scale(0.5) - Vec3::new(0.0, 0.0, focal_length);
+    let camera = Camera::new();
 
     let mut world = HittableList::new();
     world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
@@ -57,8 +49,8 @@ fn main() -> std::io::Result<()> {
     let color_for_position = move |Rect { width, height }| {
         let u = width as f64 / (IMAGE_WIDTH - 1) as f64;
         let v = height as f64 / (IMAGE_HEIGHT - 1) as f64;
-        let dir = (lower_left_corner - origin) + horizontal.scale(u) + vertical.scale(v);
-        let r = Ray::new(origin, dir);
+        let dir = camera.dir(u, v);
+        let r = Ray::new(camera.origin(), dir);
         ray_color(r, &world)
     };
     ppm.write(&mut std::io::stdout(), color_for_position)
