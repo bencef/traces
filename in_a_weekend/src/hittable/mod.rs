@@ -1,6 +1,7 @@
 use crate::{Point3, Ray, Vec3};
 
 mod sphere;
+mod list;
 
 pub struct HitRecord {
     point: Point3,
@@ -28,5 +29,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
