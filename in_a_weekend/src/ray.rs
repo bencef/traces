@@ -16,6 +16,10 @@ impl Ray {
         self.dir
     }
 
+    pub fn at(&self, t: f64) -> Point3 {
+        self.orig + self.dir.scale(t)
+    }
+
     pub fn origin(&self) -> Point3 {
         self.orig
     }

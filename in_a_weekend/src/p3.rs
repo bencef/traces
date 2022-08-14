@@ -13,6 +13,10 @@ impl Point3 {
     pub fn zero() -> Self {
         Self(Vec3::zero())
     }
+
+    pub fn xyz(&self) -> (f64,f64,f64) {
+        self.0.xyz()
+    }
 }
 
 impl Sub<Vec3> for Point3 {

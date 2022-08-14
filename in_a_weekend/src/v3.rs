@@ -1,5 +1,7 @@
 use std::ops::*;
 
+use crate::p3::Point3;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
     e1: f64,
@@ -41,7 +43,6 @@ impl Vec3 {
         squared.sqrt()
     }
 
-    // x, y, z
     pub fn x(&self) -> f64 {
         self.e1
     }
@@ -52,6 +53,10 @@ impl Vec3 {
 
     pub fn z(&self) -> f64 {
         self.e3
+    }
+
+    pub fn xyz(&self) -> (f64, f64, f64) {
+        (self.x(), self.y(), self.z())
     }
 }
 
@@ -86,6 +91,17 @@ impl Sub for Vec3 {
         let e3 = self.e3 - rhs.e3;
 
         Vec3 { e1, e2, e3 }
+    }
+}
+
+impl From<Point3> for Vec3 {
+    fn from(p: Point3) -> Self {
+        let (x, y, z) = p.xyz();
+        Self {
+            e1: x,
+            e2: y,
+            e3: z,
+        }
     }
 }
 

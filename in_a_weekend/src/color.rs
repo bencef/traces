@@ -13,6 +13,12 @@ impl Color {
         Color(v)
     }
 
+    pub fn from_normal(n: Vec3) -> Self {
+        let moved = n + Vec3::new(1.0, 1.0, 1.0);
+        let scaled = moved.scale(0.5);
+        Self(scaled)
+    }
+
     pub fn r(&self) -> f64 {
         self.0.x()
     }
