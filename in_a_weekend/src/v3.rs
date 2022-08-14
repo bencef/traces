@@ -94,6 +94,14 @@ impl Sub for Vec3 {
     }
 }
 
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Self) {
+        self.e1 += rhs.e1;
+        self.e2 += rhs.e2;
+        self.e3 += rhs.e3;
+    }
+}
+
 impl From<Point3> for Vec3 {
     fn from(p: Point3) -> Self {
         let (x, y, z) = p.xyz();

@@ -30,6 +30,15 @@ impl Color {
     pub fn b(&self) -> f64 {
         self.0.z()
     }
+
+    pub fn sampled(self, sample_per_pixel: usize) -> Self {
+        let (e1, e2, e3) = self.0.xyz();
+        let e1 = f64::clamp(e1 / sample_per_pixel as f64, 0.0, 1.0);
+        let e2 = f64::clamp(e2 / sample_per_pixel as f64, 0.0, 1.0);
+        let e3 = f64::clamp(e3 / sample_per_pixel as f64, 0.0, 1.0);
+        let v = Vec3::new(e1, e2, e3);
+        Self(v)
+    }
 }
 
 impl std::ops::Mul<Color> for f64 {
@@ -45,5 +54,11 @@ impl std::ops::Add for Color {
 
     fn add(self, rhs: Self) -> Self::Output {
         Color(self.0 + rhs.0)
+    }
+}
+
+impl std::ops::AddAssign for Color {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0
     }
 }

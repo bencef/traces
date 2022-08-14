@@ -14,7 +14,10 @@ use ray::Ray;
 use std::{f64::INFINITY, rc::Rc};
 use v3::Vec3;
 
-use crate::{camera::Camera, hittable::{list::HittableList, sphere::Sphere}};
+use crate::{
+    camera::Camera,
+    hittable::{list::HittableList, sphere::Sphere},
+};
 
 pub struct Rect {
     width: usize,
@@ -35,6 +38,7 @@ fn ray_color(r: Ray, world: &dyn Hittable) -> Color {
 fn main() -> std::io::Result<()> {
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
+    const SAMPLE_PER_PIXEL: usize = 100;
 
     let camera = Camera::new();
 
@@ -47,11 +51,15 @@ fn main() -> std::io::Result<()> {
         width: IMAGE_WIDTH,
     });
     let color_for_position = move |Rect { width, height }| {
-        let u = width as f64 / (IMAGE_WIDTH - 1) as f64;
-        let v = height as f64 / (IMAGE_HEIGHT - 1) as f64;
-        let dir = camera.dir(u, v);
-        let r = Ray::new(camera.origin(), dir);
-        ray_color(r, &world)
+        let mut color = Color::rgb(0.0, 0.0, 0.0);
+        for _sample_number in 1..SAMPLE_PER_PIXEL {
+            let u = (width) as f64 / (IMAGE_WIDTH - 1) as f64;
+            let v = height as f64 / (IMAGE_HEIGHT - 1) as f64;
+            let dir = camera.dir(u, v);
+            let r = Ray::new(camera.origin(), dir);
+            color += ray_color(r, &world);
+        }
+        color.sampled(SAMPLE_PER_PIXEL)
     };
     ppm.write(&mut std::io::stdout(), color_for_position)
 }
