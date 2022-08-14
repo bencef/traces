@@ -19,14 +19,14 @@ fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> Option<f64> {
     let oc: Vec3 = r.origin() - center;
     // variables for quadratic equation
     let a = Vec3::dot(r.dir(), r.dir());
-    let b = 2.0 * Vec3::dot(oc, r.dir());
+    let half_b = Vec3::dot(oc, r.dir());
     let c = Vec3::dot(oc, oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
+    let discriminant = half_b * half_b - a * c;
     // ray intersects sphere
     if discriminant < 0.0 {
         None
     } else {
-        let normal = (-b - discriminant.sqrt()) / (2.0 * a);
+        let normal = (-half_b - discriminant.sqrt()) / a;
         Some(normal)
     }
 }
