@@ -3,6 +3,7 @@ mod p3;
 mod ppm;
 mod ray;
 mod v3;
+mod hittable;
 
 use color::Color;
 use p3::Point3;
