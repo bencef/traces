@@ -40,8 +40,15 @@ impl Color {
         Self(v)
     }
 
-    pub fn gamma_corrected(self) -> Color {
+    pub fn gamma_corrected(self) -> Self {
         Self::rgb(self.r().sqrt(), self.g().sqrt(), self.b().sqrt())
+    }
+
+    pub fn into_gamma(self) -> Self {
+        let r = self.r().powf(2.0);
+        let g = self.g().powf(2.0);
+        let b = self.b().powf(2.0);
+        Self::rgb(r, g, b)
     }
 }
 
