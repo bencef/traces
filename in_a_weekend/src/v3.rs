@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::ops::*;
 
 use crate::p3::Point3;
@@ -58,6 +59,19 @@ impl Vec3 {
     pub fn xyz(&self) -> (f64, f64, f64) {
         (self.x(), self.y(), self.z())
     }
+
+    pub fn random(min: f64, max: f64) -> Self {
+        let mut rng = rand::thread_rng();
+        let e1 = lerp(min, max, rng.gen::<f64>());
+        let e2 = lerp(min, max, rng.gen::<f64>());
+        let e3 = lerp(min, max, rng.gen::<f64>());
+        Self::new(e1, e2, e3)
+    }
+}
+
+// FIXME: rust's f64::lerp is unstable at the time of writing this
+fn lerp(min: f64, max: f64, t: f64) -> f64 {
+    min + t * (max - min)
 }
 
 impl Neg for Vec3 {
@@ -138,5 +152,16 @@ mod test {
         let with_nan = Vec3::new(f64::NAN, 0.0, 0.0);
         v += with_nan;
         assert_eq!(v.x(), 0.0);
+    }
+
+    #[test]
+    pub fn lerp_does_what_i_think_it_does() {
+        let lerp_min = lerp(-2.0, 2.0, 0.0);
+        let lerp_max = lerp(-2.0, 2.0, 1.0);
+        fn close_enough(a: f64, b: f64) -> bool {
+            (a - b).abs() < 1e-10
+        }
+        assert!(close_enough(lerp_min, -2.0));
+        assert!(close_enough(lerp_max, 2.0));
     }
 }
