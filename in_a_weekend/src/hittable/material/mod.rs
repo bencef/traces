@@ -8,6 +8,16 @@ pub struct Scatter {
     attenuation: Color,
 }
 
+impl Scatter {
+    pub fn attenuation(&self) -> Color {
+        self.attenuation
+    }
+
+    pub fn ray(&self) -> &Ray {
+        &self.scattered_ray
+    }
+}
+
 pub trait Material {
-    fn scatter(&self, ray: Ray, rec: &HitRecord) -> Option<Scatter>;
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<Scatter>;
 }

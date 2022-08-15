@@ -25,17 +25,17 @@ pub struct Rect {
     height: usize,
 }
 
-fn ray_color(ray: Ray, world: &dyn Hittable, depth: usize) -> Color {
+fn ray_color(ray: &Ray, world: &dyn Hittable, depth: usize) -> Color {
     if depth == 0 {
         return Color::rgb(0.0, 0.0, 0.0);
     }
 
     // avoid self bounces
     let min = 0.001;
-    if let Some(rec) = world.hit(&ray, min, INFINITY) {
-        let target = rec.point() + rec.normal() + random_unit_vector();
-        let ray = Ray::new(rec.point(), target - rec.point());
-        return 0.5 * ray_color(ray, world, depth - 1);
+    if let Some(rec) = world.hit(ray, min, INFINITY) {
+        if let Some(scatter) = rec.material().as_ref().scatter(ray, &rec) {
+            return scatter.attenuation() * ray_color(scatter.ray(), world, depth - 1);
+        }
     }
     let dir = ray.dir().normalized();
     let t = 0.5 * (dir.y() + 1.0);
@@ -106,7 +106,7 @@ fn main() -> std::io::Result<()> {
             let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
             let dir = camera.dir(u, v);
             let r = Ray::new(camera.origin(), dir);
-            color += ray_color(r, &world, MAX_DEPTH);
+            color += ray_color(&r, &world, MAX_DEPTH);
         }
         color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
     };

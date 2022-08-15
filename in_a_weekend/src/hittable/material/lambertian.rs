@@ -13,7 +13,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, ray: Ray, rec: &HitRecord) -> Option<Scatter> {
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<Scatter> {
         todo!()
     }
 }

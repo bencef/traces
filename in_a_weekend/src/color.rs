@@ -68,6 +68,20 @@ impl std::ops::Add for Color {
     }
 }
 
+impl std::ops::Mul for Color {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        // FIXME: Not sure where this is in the book.  Will do an
+        // element-wise multiplication on RGB channels.  Surely not
+        // the best we can do.
+        let r = self.r() * rhs.r();
+        let g = self.g() * rhs.g();
+        let b = self.b() * rhs.b();
+        Self::rgb(r, g, b)
+    }
+}
+
 impl std::ops::AddAssign for Color {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0

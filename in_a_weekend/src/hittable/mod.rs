@@ -34,12 +34,16 @@ impl HitRecord {
         }
     }
 
-    pub(crate) fn normal(&self) -> Vec3 {
+    pub fn normal(&self) -> Vec3 {
         self.normal
     }
 
     pub fn point(&self) -> Point3 {
         self.point
+    }
+
+    pub fn material(&self) -> Rc<dyn Material> {
+        self.material.clone()
     }
 }
 
