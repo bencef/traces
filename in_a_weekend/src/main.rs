@@ -39,9 +39,11 @@ fn ray_color(ray: Ray, world: &dyn Hittable, depth: usize) -> Color {
     }
     let dir = ray.dir().normalized();
     let t = 0.5 * (dir.y() + 1.0);
-    let mix_factor_white = 1.0 - t;
-    let mix_factor_sky = t;
-    mix_factor_white * Color::rgb(1.0, 1.0, 1.0) + mix_factor_sky * Color::rgb(0.5, 0.7, 1.0)
+    let mix_factor_sky_bottom = 1.0 - t;
+    let mix_factor_sky_top = t;
+    let sky_bottom_color = Color::rgb(1.0, 1.0, 1.0);
+    let sky_top_color = Color::rgb(0.5, 0.7, 1.0);
+    mix_factor_sky_bottom * sky_bottom_color + mix_factor_sky_top * sky_top_color
 }
 
 fn random_in_unit_sphere() -> Vec3 {
