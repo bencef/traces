@@ -1,18 +1,22 @@
+use self::material::Material;
 use crate::{Point3, Ray, Vec3};
 
-pub mod sphere;
+use std::rc::Rc;
+
 pub mod list;
 pub mod material;
+pub mod sphere;
 
 pub struct HitRecord {
     point: Point3,
     normal: Vec3,
+    material: Rc<dyn Material>,
     scale: f64,
     front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(ray: &Ray, normal: Vec3, scale: f64) -> Self {
+    pub fn new(ray: &Ray, normal: Vec3, material: Rc<dyn Material>, scale: f64) -> Self {
         let point = ray.at(scale);
         // BUG: Book says this should be less than 0
         let front_face = Vec3::dot(ray.dir(), ray.dir()) > 0.0;
@@ -24,6 +28,7 @@ impl HitRecord {
         Self {
             point,
             normal,
+            material,
             scale,
             front_face,
         }

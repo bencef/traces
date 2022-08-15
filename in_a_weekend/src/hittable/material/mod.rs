@@ -1,7 +1,13 @@
+use super::HitRecord;
 use crate::{color::Color, ray::Ray};
 
-use super::HitRecord;
+pub mod lambertian;
+
+pub struct Scatter {
+    scattered_ray: Ray,
+    attenuation: Color,
+}
 
 pub trait Material {
-    fn scatter(&self, ray: Ray, rec: &HitRecord, attenuation: &Color) -> Option<Ray>;
+    fn scatter(&self, ray: Ray, rec: &HitRecord) -> Option<Scatter>;
 }

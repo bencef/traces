@@ -17,7 +17,7 @@ use v3::Vec3;
 
 use crate::{
     camera::Camera,
-    hittable::{list::HittableList, sphere::Sphere},
+    hittable::{list::HittableList, material::lambertian::Lambertian, sphere::Sphere},
 };
 
 pub struct Rect {
@@ -79,8 +79,17 @@ fn main() -> std::io::Result<()> {
     let camera = Camera::new();
 
     let mut world = HittableList::new();
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+    let matte_gray = Lambertian::new(Color::rgb(0.5, 0.5, 0.5));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        matte_gray.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        matte_gray,
+    )));
 
     let ppm = Ppm::new(Rect {
         height: IMAGE_HEIGHT,
