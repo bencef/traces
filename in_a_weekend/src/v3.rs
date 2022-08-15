@@ -103,7 +103,11 @@ impl AddAssign for Vec3 {
 }
 
 fn fix_nan(v: f64) -> f64 {
-    if v.is_nan() {0.0} else {v}
+    if v.is_nan() {
+        0.0
+    } else {
+        v
+    }
 }
 
 impl From<Point3> for Vec3 {
