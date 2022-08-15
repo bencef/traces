@@ -2,6 +2,7 @@ use crate::{Point3, Ray, Vec3};
 
 pub mod sphere;
 pub mod list;
+pub mod material;
 
 pub struct HitRecord {
     point: Point3,
