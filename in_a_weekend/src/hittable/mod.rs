@@ -31,6 +31,10 @@ impl HitRecord {
     pub(crate) fn normal(&self) -> Vec3 {
         self.normal
     }
+
+    pub fn point(&self) -> Point3 {
+        self.point
+    }
 }
 
 pub trait Hittable {

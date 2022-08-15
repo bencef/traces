@@ -67,6 +67,10 @@ impl Vec3 {
         let e3 = lerp(min, max, rng.gen::<f64>());
         Self::new(e1, e2, e3)
     }
+
+    pub fn length_squared(self) -> f64 {
+        Self::dot(self, self)
+    }
 }
 
 // FIXME: rust's f64::lerp is unstable at the time of writing this
