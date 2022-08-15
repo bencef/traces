@@ -56,16 +56,20 @@ fn random_in_unit_sphere() -> Vec3 {
 
 #[cfg(debug_assertions)]
 const SAMPLE_PER_PIXEL: usize = 10;
-
 #[cfg(not(debug_assertions))]
 const SAMPLE_PER_PIXEL: usize = 100;
 
+/// Number of ray bounces to calculate
 const MAX_DEPTH: usize = 50;
 
-fn main() -> std::io::Result<()> {
-    const IMAGE_WIDTH: usize = 400;
-    const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
+#[cfg(debug_assertions)]
+const IMAGE_WIDTH: usize = 400;
+#[cfg(not(debug_assertions))]
+const IMAGE_WIDTH: usize = 1000;
 
+const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
+
+fn main() -> std::io::Result<()> {
     let camera = Camera::new();
 
     let mut world = HittableList::new();
