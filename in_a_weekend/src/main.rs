@@ -46,20 +46,6 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: usize) -> Color {
     mix_factor_sky_bottom * sky_bottom_color + mix_factor_sky_top * sky_top_color
 }
 
-fn random_unit_vector() -> Vec3 {
-    random_in_unit_sphere().normalized()
-}
-
-fn random_in_unit_sphere() -> Vec3 {
-    loop {
-        let vec = Vec3::random(-1.0, 1.0);
-        // FIXME: less is used in the book.  Isn't equal OK too?
-        if vec.length_squared() < 1.0 {
-            return vec;
-        }
-    }
-}
-
 #[cfg(debug_assertions)]
 const SAMPLE_PER_PIXEL: usize = 10;
 #[cfg(not(debug_assertions))]
