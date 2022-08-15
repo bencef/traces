@@ -87,7 +87,7 @@ fn main() -> std::io::Result<()> {
             let r = Ray::new(camera.origin(), dir);
             color += ray_color(r, &world, MAX_DEPTH);
         }
-        color.sampled(SAMPLE_PER_PIXEL)
+        color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
     };
     ppm.write(&mut std::io::stdout(), color_for_position)
 }

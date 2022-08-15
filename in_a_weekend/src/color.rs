@@ -39,6 +39,10 @@ impl Color {
         let v = Vec3::new(e1, e2, e3);
         Self(v)
     }
+
+    pub fn gamma_corrected(self) -> Color {
+        Self::rgb(self.r().sqrt(), self.g().sqrt(), self.b().sqrt())
+    }
 }
 
 impl std::ops::Mul<Color> for f64 {
