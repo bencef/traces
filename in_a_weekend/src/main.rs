@@ -33,7 +33,7 @@ fn ray_color(ray: Ray, world: &dyn Hittable, depth: usize) -> Color {
     // avoid self bounces
     let min = 0.001;
     if let Some(rec) = world.hit(&ray, min, INFINITY) {
-        let target = rec.point() + rec.normal() + random_in_unit_sphere();
+        let target = rec.point() + rec.normal() + random_unit_vector();
         let ray = Ray::new(rec.point(), target - rec.point());
         return 0.5 * ray_color(ray, world, depth - 1);
     }
@@ -44,6 +44,10 @@ fn ray_color(ray: Ray, world: &dyn Hittable, depth: usize) -> Color {
     let sky_bottom_color = Color::rgb(1.0, 1.0, 1.0).into_gamma();
     let sky_top_color = Color::rgb(0.5, 0.7, 1.0).into_gamma();
     mix_factor_sky_bottom * sky_bottom_color + mix_factor_sky_top * sky_top_color
+}
+
+fn random_unit_vector() -> Vec3 {
+    random_in_unit_sphere().normalized()
 }
 
 fn random_in_unit_sphere() -> Vec3 {
