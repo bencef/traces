@@ -30,7 +30,9 @@ fn ray_color(ray: Ray, world: &dyn Hittable, depth: usize) -> Color {
         return Color::rgb(0.0, 0.0, 0.0);
     }
 
-    if let Some(rec) = world.hit(&ray, 0.0, INFINITY) {
+    // avoid self bounces
+    let min = 0.001;
+    if let Some(rec) = world.hit(&ray, min, INFINITY) {
         let target = rec.point() + rec.normal() + random_in_unit_sphere();
         let ray = Ray::new(rec.point(), target - rec.point());
         return 0.5 * ray_color(ray, world, depth - 1);
