@@ -71,6 +71,11 @@ impl Vec3 {
     pub fn length_squared(self) -> f64 {
         Self::dot(self, self)
     }
+
+    pub fn near_zero(&self) -> bool {
+        let epsilon = 1e-8;
+        self.e1.abs() < epsilon && self.e2.abs() < epsilon && self.e3.abs() < epsilon
+    }
 }
 
 // FIXME: rust's f64::lerp is unstable at the time of writing this
