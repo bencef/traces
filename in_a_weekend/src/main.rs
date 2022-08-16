@@ -73,8 +73,8 @@ fn main() -> std::io::Result<()> {
     let mut world = HittableList::new();
     let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));
     let matte_center = Lambertian::new_rc(Color::rgb(0.7, 0.3, 0.3));
-    let metal_left = Metal::new_rc(Color::rgb(0.8, 0.8, 0.8));
-    let metal_right = Metal::new_rc(Color::rgb(0.8, 0.6, 0.2));
+    let metal_left = Metal::new_rc(Color::rgb(0.8, 0.8, 0.8), 0.05);
+    let metal_right = Metal::new_rc(Color::rgb(0.8, 0.6, 0.2), 0.7);
 
     world.add(Sphere::new_rc(
         Point3::new(0.0, -100.5, -1.0),

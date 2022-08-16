@@ -1,5 +1,5 @@
-use super::{Material, Scatter};
-use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
+use super::{random_unit_vector, Material, Scatter};
+use crate::{color::Color, hittable::HitRecord, ray::Ray};
 use std::rc::Rc;
 
 pub struct Lambertian {
@@ -28,19 +28,5 @@ impl Material for Lambertian {
             scattered_ray,
             attenuation,
         })
-    }
-}
-
-fn random_unit_vector() -> Vec3 {
-    random_in_unit_sphere().normalized()
-}
-
-fn random_in_unit_sphere() -> Vec3 {
-    loop {
-        let vec = Vec3::random(-1.0, 1.0);
-        // FIXME: less is used in the book.  Isn't equal OK too?
-        if vec.length_squared() < 1.0 {
-            return vec;
-        }
     }
 }
