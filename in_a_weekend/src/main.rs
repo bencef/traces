@@ -36,6 +36,8 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: usize) -> Color {
         if let Some(scatter) = rec.material().as_ref().scatter(ray, &rec) {
             return scatter.attenuation() * ray_color(scatter.ray(), world, depth - 1);
         }
+        // There was a hit, but it is absorbed
+        return Color::rgb(0.0, 0.0, 0.0);
     }
     let dir = ray.dir().normalized();
     let t = 0.5 * (dir.y() + 1.0);
