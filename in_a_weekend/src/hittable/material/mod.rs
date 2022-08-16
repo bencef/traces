@@ -2,6 +2,7 @@ use super::HitRecord;
 use crate::{color::Color, ray::Ray};
 
 pub mod lambertian;
+pub mod metal;
 
 pub struct Scatter {
     scattered_ray: Ray,
