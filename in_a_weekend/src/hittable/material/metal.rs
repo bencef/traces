@@ -1,8 +1,16 @@
+use std::rc::Rc;
+
 use super::{Material, Scatter};
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
 
 pub struct Metal {
     albedo: Color,
+}
+
+impl Metal {
+    pub fn new_rc(albedo: Color) -> Rc<Self> {
+        Rc::new(Self { albedo })
+    }
 }
 
 impl Material for Metal {

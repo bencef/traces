@@ -12,12 +12,16 @@ use p3::Point3;
 use ppm::Ppm;
 use rand::Rng;
 use ray::Ray;
-use std::{f64::INFINITY, rc::Rc};
+use std::f64::INFINITY;
 use v3::Vec3;
 
 use crate::{
     camera::Camera,
-    hittable::{list::HittableList, material::lambertian::Lambertian, sphere::Sphere},
+    hittable::{
+        list::HittableList,
+        material::{lambertian::Lambertian, metal::Metal},
+        sphere::Sphere,
+    },
 };
 
 pub struct Rect {
@@ -67,17 +71,31 @@ fn main() -> std::io::Result<()> {
     let camera = Camera::new();
 
     let mut world = HittableList::new();
-    let matte_gray = Lambertian::new(Color::rgb(0.5, 0.5, 0.5));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        matte_gray.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
+    let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));
+    let matte_center = Lambertian::new_rc(Color::rgb(0.7, 0.3, 0.3));
+    let metal_left = Metal::new_rc(Color::rgb(0.8, 0.8, 0.8));
+    let metal_right = Metal::new_rc(Color::rgb(0.8, 0.6, 0.2));
+
+    world.add(Sphere::new_rc(
         Point3::new(0.0, -100.5, -1.0),
         100.0,
-        matte_gray,
-    )));
+        matte_ground,
+    ));
+    world.add(Sphere::new_rc(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        matte_center,
+    ));
+    world.add(Sphere::new_rc(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        metal_left,
+    ));
+    world.add(Sphere::new_rc(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
+        metal_right,
+    ));
 
     let ppm = Ppm::new(Rect {
         height: IMAGE_HEIGHT,

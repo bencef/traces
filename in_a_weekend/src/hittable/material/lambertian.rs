@@ -7,7 +7,7 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
-    pub fn new(albedo: Color) -> Rc<Self> {
+    pub fn new_rc(albedo: Color) -> Rc<Self> {
         Rc::new(Self { albedo })
     }
 }

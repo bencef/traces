@@ -17,6 +17,10 @@ impl Sphere {
             material,
         }
     }
+
+    pub fn new_rc(center: Point3, radius: f64, material: Rc<dyn Material>) -> Rc<Self> {
+        Rc::new(Self::new(center, radius, material))
+    }
 }
 
 impl Hittable for Sphere {
