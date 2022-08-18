@@ -12,10 +12,7 @@ use p3::Point3;
 use ppm::Ppm;
 use rand::Rng;
 use ray::Ray;
-use std::{
-    f64::{consts::PI, INFINITY},
-    rc::Rc,
-};
+use std::{f64::{consts::PI, INFINITY}, sync::{Arc, RwLock}};
 use v3::Vec3;
 
 use crate::{
@@ -27,6 +24,7 @@ use crate::{
     },
 };
 
+#[derive(Clone)]
 pub struct Rect {
     width: usize,
     height: usize,
@@ -75,29 +73,31 @@ const IMAGE_WIDTH: usize = 1080;
 
 const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
 
+const WORKER_THREADS: usize = 8;
+
 fn main() -> std::io::Result<()> {
     let mut world = HittableList::new();
-    let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));
-    let glass_center = Dielectric::new_rc(1.5);
-    let metal_left = Metal::new_rc(Color::rgb(0.8, 0.8, 0.8), 0.05);
-    let metal_right = Metal::new_rc(Color::rgb(0.8, 0.6, 0.2), 0.7);
+    let matte_ground = Lambertian::new_arc(Color::rgb(0.8, 0.8, 0.0));
+    let glass_center = Dielectric::new_arc(1.5);
+    let metal_left = Metal::new_arc(Color::rgb(0.8, 0.8, 0.8), 0.05);
+    let metal_right = Metal::new_arc(Color::rgb(0.8, 0.6, 0.2), 0.7);
 
-    world.add(Sphere::new_rc(
+    world.add(Sphere::new_arc(
         Point3::new(0.0, -100.5, -1.0),
         100.0,
         matte_ground,
     ));
-    world.add(Sphere::new_rc(
+    world.add(Sphere::new_arc(
         Point3::new(0.0, 0.0, -1.0),
         0.5,
         glass_center,
     ));
-    world.add(Sphere::new_rc(
+    world.add(Sphere::new_arc(
         Point3::new(-1.0, 0.0, -1.0),
         0.5,
         metal_left,
     ));
-    world.add(Sphere::new_rc(
+    world.add(Sphere::new_arc(
         Point3::new(1.0, 0.0, -1.0),
         0.5,
         metal_right,
@@ -117,7 +117,8 @@ fn main() -> std::io::Result<()> {
     const SCENE_LEN_SEC: usize = 3;
     const FRAMES: usize = FPS * SCENE_LEN_SEC;
 
-    let world = Rc::new(world);
+    let pool = threadpool::ThreadPool::new(WORKER_THREADS);
+    let world = Arc::new(RwLock::new(world));
 
     for frame in 0..FRAMES {
         let tau = frame as f64 * 2.0 * PI / FRAMES as f64;
@@ -126,29 +127,36 @@ fn main() -> std::io::Result<()> {
             + Vec3::new(0.0, 0.5, 0.0);
         let camera = Camera::new(origin, camera_focus, Vec3::new(0.0, 1.0, 0.0));
 
+        let ppm = ppm.clone();
         let world = world.clone();
 
-        let color_for_position = move |Rect { width, height }| {
-            let mut rng = rand::thread_rng();
-            let mut color = Color::rgb(0.0, 0.0, 0.0);
-            for _sample_number in 1..SAMPLE_PER_PIXEL {
-                let u = (width as f64 + rng.gen::<f64>()) / (IMAGE_WIDTH - 1) as f64;
-                let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
-                let dir = camera.dir(u, v);
-                let r = Ray::new(camera.origin(), dir);
-                color += ray_color(&r, &*world, MAX_DEPTH);
-            }
-            color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
-        };
+        pool.execute(move || {
+            let color_for_position = move |Rect { width, height }| {
+                let world = world.as_ref().read().expect("Couldn't read world");
+                let mut rng = rand::thread_rng();
+                let mut color = Color::rgb(0.0, 0.0, 0.0);
+                for _sample_number in 1..SAMPLE_PER_PIXEL {
+                    let u = (width as f64 + rng.gen::<f64>()) / (IMAGE_WIDTH - 1) as f64;
+                    let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
+                    let dir = camera.dir(u, v);
+                    let r = Ray::new(camera.origin(), dir);
+                    color += ray_color(&r, &*world, MAX_DEPTH);
+                }
+                color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
+            };
 
-        let out_file_name = format!("out_{:05}.ppm", frame);
-        let mut out_file = std::fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .open(out_file_name)?;
-        ppm.write(&mut out_file, color_for_position)?
-        // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
+            let out_file_name = format!("out_{:05}.ppm", frame);
+            let mut out_file = std::fs::OpenOptions::new()
+                .create(true)
+                .write(true)
+                .truncate(true)
+                .open(out_file_name.clone())
+                .expect(&format!("Can't open file for writing: {}", out_file_name));
+            ppm.write(&mut out_file, color_for_position)
+                .expect(&format!("Couldn't write PPM for: {}", out_file_name))
+            // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
+        });
     }
+    pool.join();
     Ok(())
 }

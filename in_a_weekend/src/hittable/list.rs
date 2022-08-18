@@ -1,8 +1,8 @@
 use super::Hittable;
-use std::{rc::Rc, vec::Vec};
+use std::{sync::Arc, vec::Vec};
 
 pub struct HittableList {
-    hittables: Vec<Rc<dyn Hittable>>,
+    hittables: Vec<Arc<dyn Hittable + Send + Sync>>,
 }
 
 impl HittableList {
@@ -16,7 +16,7 @@ impl HittableList {
         self.hittables.clear()
     }
 
-    pub fn add(&mut self, object: Rc<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable + Send + Sync>) {
         self.hittables.push(object)
     }
 }

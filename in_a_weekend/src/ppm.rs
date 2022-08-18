@@ -1,6 +1,7 @@
 use crate::color::Color;
 use crate::Rect;
 
+#[derive(Clone)]
 pub struct Ppm {
     size: Rect,
 }

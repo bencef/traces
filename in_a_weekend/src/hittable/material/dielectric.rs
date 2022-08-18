@@ -1,5 +1,4 @@
-use std::rc::Rc;
-
+use std::sync::Arc;
 use rand::Rng;
 
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
@@ -11,8 +10,8 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
-    pub fn new_rc(refraction_index: f64) -> Rc<Self> {
-        Rc::new(Self { refraction_index })
+    pub fn new_arc(refraction_index: f64) -> Arc<Self> {
+        Arc::new(Self { refraction_index })
     }
 }
 

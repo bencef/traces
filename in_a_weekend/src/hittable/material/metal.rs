@@ -1,6 +1,6 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
-use super::{Material, Scatter, random_in_unit_sphere, reflect};
+use super::{random_in_unit_sphere, reflect, Material, Scatter};
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
 
 pub struct Metal {
@@ -9,8 +9,8 @@ pub struct Metal {
 }
 
 impl Metal {
-    pub fn new_rc(albedo: Color, fuzz: f64) -> Rc<Self> {
-        Rc::new(Self {
+    pub fn new_arc(albedo: Color, fuzz: f64) -> Arc<Self> {
+        Arc::new(Self {
             albedo,
             fuzz: fuzz.clamp(0.0, 1.0),
         })

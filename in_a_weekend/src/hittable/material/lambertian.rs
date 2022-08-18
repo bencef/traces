@@ -1,14 +1,14 @@
 use super::{random_unit_vector, Material, Scatter};
 use crate::{color::Color, hittable::HitRecord, ray::Ray};
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct Lambertian {
     albedo: Color,
 }
 
 impl Lambertian {
-    pub fn new_rc(albedo: Color) -> Rc<Self> {
-        Rc::new(Self { albedo })
+    pub fn new_arc(albedo: Color) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 }
 

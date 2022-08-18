@@ -1,7 +1,7 @@
 use self::material::Material;
 use crate::{Point3, Ray, Vec3};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub mod list;
 pub mod material;
@@ -10,7 +10,7 @@ pub mod sphere;
 pub struct HitRecord {
     point: Point3,
     normal: Vec3,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
     scale: f64,
     front_face: bool,
 }
@@ -28,7 +28,7 @@ impl std::fmt::Debug for HitRecord {
 }
 
 impl HitRecord {
-    pub fn new(ray: &Ray, normal: Vec3, material: Rc<dyn Material>, scale: f64) -> Self {
+    pub fn new(ray: &Ray, normal: Vec3, material: Arc<dyn Material>, scale: f64) -> Self {
         let point = ray.at(scale);
         let front_face = Vec3::dot(ray.dir(), normal) < 0.0;
         let normal = if front_face {
@@ -53,7 +53,7 @@ impl HitRecord {
         self.point
     }
 
-    pub fn material(&self) -> Rc<dyn Material> {
+    pub fn material(&self) -> Arc<dyn Material> {
         self.material.clone()
     }
 
