@@ -43,14 +43,18 @@ impl Material for Dielectric {
 }
 
 fn should_reflect(ray_dir: Vec3, normal: Vec3, refraction_ratio: f64) -> bool {
-    let cos_theta = Vec3::dot(ray_dir, normal.scale(-1.0)).min(1.0);
+    let cos_theta = Vec3::dot(ray_dir, normal.scale(-1.0));
     reflectance(cos_theta, refraction_ratio) > rand::thread_rng().gen()
 }
 
 fn reflectance(cos_theta: f64, refraction_ratio: f64) -> f64 {
     // Use Schlick's approximation
     let r0 = ((1.0 - refraction_ratio) / (1.0 + refraction_ratio)).powi(2);
-    r0 + (1.0 - r0) * (1.0 - cos_theta).powi(5)
+    let res = r0 + (1.0 - r0) * (1.0 - cos_theta).max(0.0).powi(5);
+    debug_assert!(!res.is_nan());
+    debug_assert!(res >= 0.0);
+    debug_assert!(res <= 1.0);
+    res
 }
 
 fn refract(unit_ray_direction: Vec3, normal: Vec3, refraction_ratio: f64) -> Option<Vec3> {
@@ -59,7 +63,11 @@ fn refract(unit_ray_direction: Vec3, normal: Vec3, refraction_ratio: f64) -> Opt
         return None;
     }
     let sin_theta_two = refraction_ratio * (1.0 - cos_theta_one.powi(2)).sqrt();
+    if sin_theta_two > 1.0 {
+        return None;
+    }
     let cos_theta_two = (1.0 - sin_theta_two.powi(2)).sqrt();
+    debug_assert!(!cos_theta_two.is_nan());
     Some(
         unit_ray_direction.scale(refraction_ratio)
             + normal.scale(refraction_ratio * cos_theta_one - cos_theta_two),
