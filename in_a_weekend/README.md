@@ -5,4 +5,4 @@ Code is translated from **C++** to **Rust** and follows the original code loosel
 
 ## Status
 
-It is a work in progress.  Implemented only some of the chapters.
+Implemented things up until the defocus blur.
