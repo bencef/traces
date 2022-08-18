@@ -15,11 +15,22 @@ pub struct HitRecord {
     front_face: bool,
 }
 
+impl std::fmt::Debug for HitRecord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("HitRecord")
+            .field("point", &self.point)
+            .field("normal", &self.normal)
+            // .field("material", &self.material)
+            .field("scale", &self.scale)
+            .field("front_face", &self.front_face)
+            .finish()
+    }
+}
+
 impl HitRecord {
     pub fn new(ray: &Ray, normal: Vec3, material: Rc<dyn Material>, scale: f64) -> Self {
         let point = ray.at(scale);
-        // BUG: Book says this should be less than 0
-        let front_face = Vec3::dot(ray.dir(), ray.dir()) > 0.0;
+        let front_face = Vec3::dot(ray.dir(), normal) < 0.0;
         let normal = if front_face {
             normal
         } else {
@@ -44,6 +55,10 @@ impl HitRecord {
 
     pub fn material(&self) -> Rc<dyn Material> {
         self.material.clone()
+    }
+
+    fn front_face(&self) -> bool {
+        self.front_face
     }
 }
 

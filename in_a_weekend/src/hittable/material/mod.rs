@@ -3,7 +3,9 @@ use crate::{color::Color, ray::Ray, v3::Vec3};
 
 pub mod lambertian;
 pub mod metal;
+pub mod dielectric;
 
+#[derive(Debug)]
 pub struct Scatter {
     scattered_ray: Ray,
     attenuation: Color,

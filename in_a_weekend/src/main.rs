@@ -19,7 +19,7 @@ use crate::{
     camera::Camera,
     hittable::{
         list::HittableList,
-        material::{lambertian::Lambertian, metal::Metal},
+        material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal},
         sphere::Sphere,
     },
 };
@@ -34,15 +34,20 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: usize) -> Color {
         return Color::rgb(0.0, 0.0, 0.0);
     }
 
+    // eprintln!("Ray {:?} at depth: {}", *ray, depth);
     // avoid self bounces
     let min = 0.001;
     if let Some(rec) = world.hit(ray, min, INFINITY) {
+        // eprintln!("There was a hit for {:?}", rec);
         if let Some(scatter) = rec.material().as_ref().scatter(ray, &rec) {
+            // eprintln!("Scattered ray is: {:?}", scatter);
             return scatter.attenuation() * ray_color(scatter.ray(), world, depth - 1);
         }
         // There was a hit, but it is absorbed
+        // eprintln!("Ray was absorbed");
         return Color::rgb(0.0, 0.0, 0.0);
     }
+    // eprint!("No hit for ray");
     let dir = ray.dir().normalized();
     let t = 0.5 * (dir.y() + 1.0);
     let mix_factor_sky_bottom = 1.0 - t;
@@ -72,7 +77,7 @@ fn main() -> std::io::Result<()> {
 
     let mut world = HittableList::new();
     let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));
-    let matte_center = Lambertian::new_rc(Color::rgb(0.7, 0.3, 0.3));
+    let glass_center = Dielectric::new_rc(1.5);
     let metal_left = Metal::new_rc(Color::rgb(0.8, 0.8, 0.8), 0.05);
     let metal_right = Metal::new_rc(Color::rgb(0.8, 0.6, 0.2), 0.7);
 
@@ -84,7 +89,7 @@ fn main() -> std::io::Result<()> {
     world.add(Sphere::new_rc(
         Point3::new(0.0, 0.0, -1.0),
         0.5,
-        matte_center,
+        glass_center,
     ));
     world.add(Sphere::new_rc(
         Point3::new(-1.0, 0.0, -1.0),
@@ -117,4 +122,6 @@ fn main() -> std::io::Result<()> {
         color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
     };
     ppm.write(&mut std::io::stdout(), color_for_position)
+    // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
+    // Ok(())
 }
