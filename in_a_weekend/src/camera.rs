@@ -10,18 +10,18 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new() -> Self {
+    pub fn new(look_from: Point3, look_at: Point3, view_up: Vec3) -> Self {
         let viewport_height = 2.0;
         let viewport_width = viewport_height * ASPECT_RATIO;
-        let focal_length = 1.0;
 
-        let origin = Point3::zero();
-        let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-        let vertical = Vec3::new(0.0, viewport_height, 0.0);
-        let lower_left_corner = origin
-            - horizontal.scale(0.5)
-            - vertical.scale(0.5)
-            - Vec3::new(0.0, 0.0, focal_length);
+        let w = (look_from - look_at).normalized();
+        let u = Vec3::cross(view_up, w).normalized();
+        let v = Vec3::cross(w, u);
+
+        let origin = look_from;
+        let horizontal = u.scale(viewport_width);
+        let vertical = v.scale(viewport_height);
+        let lower_left_corner = origin - horizontal.scale(0.5) - vertical.scale(0.5) - w;
 
         Self {
             origin,

@@ -73,7 +73,11 @@ const IMAGE_WIDTH: usize = 1000;
 const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
 
 fn main() -> std::io::Result<()> {
-    let camera = Camera::new();
+    let camera = Camera::new(
+        Point3::new(0.0, 0.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+    );
 
     let mut world = HittableList::new();
     let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));

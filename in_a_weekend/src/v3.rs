@@ -76,6 +76,18 @@ impl Vec3 {
         let epsilon = 1e-8;
         self.e1.abs() < epsilon && self.e2.abs() < epsilon && self.e3.abs() < epsilon
     }
+
+    pub fn cross(a: Vec3, b: Vec3) -> Vec3 {
+        let e1 = a.y() * b.z() - a.z() * b.y();
+        let minus_e2 = a.x() * b.z() - a.z() * b.x();
+        let e3 = a.x() * b.y() - a.y() * b.x();
+
+        Vec3 {
+            e1,
+            e2: -1.0 * minus_e2,
+            e3,
+        }
+    }
 }
 
 // FIXME: rust's f64::lerp is unstable at the time of writing this
@@ -172,5 +184,24 @@ mod test {
         }
         assert!(close_enough(lerp_min, -2.0));
         assert!(close_enough(lerp_max, 2.0));
+    }
+
+    #[test]
+    pub fn cross_product_of_a_is_zero() {
+        let a = Vec3::new(3.9, 12.3, -6.2);
+        let cross_a = Vec3::cross(a, a);
+        let len = Vec3::dot(cross_a, cross_a).abs();
+        assert!(len < 1e-10);
+    }
+
+    #[test]
+    pub fn cross_product_of_orthonormal() {
+        let x = Vec3::new(1.0, 0.0, 0.0);
+        let y = Vec3::new(0.0, 1.0, 0.0);
+        let z = Vec3::new(0.0, 0.0, 1.0);
+        let cross_x_y = Vec3::cross(x, y);
+        let diff = cross_x_y-z;
+        let len = Vec3::dot(diff, diff).abs();
+        assert!(len < 1e-10);
     }
 }
