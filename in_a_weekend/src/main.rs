@@ -93,12 +93,12 @@ fn main() -> std::io::Result<()> {
         glass_center,
     ));
     world.add(Sphere::new_arc(
-        Point3::new(-1.0, 0.0, -1.0),
+        Point3::new(-1.1, 0.0, -1.0),
         0.5,
         metal_left,
     ));
     world.add(Sphere::new_arc(
-        Point3::new(1.0, 0.0, -1.0),
+        Point3::new(1.1, 0.0, -1.0),
         0.5,
         metal_right,
     ));
@@ -111,7 +111,7 @@ fn main() -> std::io::Result<()> {
     eprintln!("Using samples per pixel: {}", SAMPLE_PER_PIXEL);
 
     let camera_focus = Point3::new(0.0, 0.0, -1.0);
-    let cam_radius = 2.0;
+    let cam_radius = 2.5;
 
     const FPS: usize = 60;
     const SCENE_LEN_SEC: usize = 3;
@@ -124,7 +124,7 @@ fn main() -> std::io::Result<()> {
         let tau = frame as f64 * 2.0 * PI / FRAMES as f64;
         let origin = Point3::new(f64::sin(tau) * cam_radius, 0.0, f64::cos(tau) * cam_radius)
             + camera_focus.into()
-            + Vec3::new(0.0, 0.5, 0.0);
+            + Vec3::new(0.0, 1.0, 0.0);
         let camera = Camera::new(origin, camera_focus, Vec3::new(0.0, 1.0, 0.0));
 
         let ppm = ppm.clone();
