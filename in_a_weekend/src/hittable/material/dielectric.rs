@@ -1,5 +1,7 @@
 use std::rc::Rc;
 
+use rand::Rng;
+
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
 
 use super::{reflect, Material, Scatter};
@@ -25,28 +27,30 @@ impl Material for Dielectric {
         };
 
         let unit_ray_direction = ray.dir().normalized();
-        if let Some(refracted_ray) = refract(
-            unit_ray_direction,
-            rec.normal().normalized(),
-            refraction_ratio,
-        ) {
-            let scattered_ray = Ray::new(rec.point(), refracted_ray);
 
-            Some(Scatter {
-                scattered_ray,
-                attenuation,
-            })
+        let refracted_ray = refract(unit_ray_direction, rec.normal(), refraction_ratio);
+        let cos_theta = Vec3::dot(ray.dir(), rec.normal().scale(-1.0)).min(1.0);
+        let ray_direction = if refracted_ray.is_none()
+            || reflectance(cos_theta, refraction_ratio) > rand::thread_rng().gen()
+        {
+            // we reflect
+            reflect(unit_ray_direction, rec.normal())
         } else {
-            // Ray can only be reflected
-            let reflection = reflect(unit_ray_direction, rec.normal());
-            let scattered_ray = Ray::new(rec.point(), reflection);
-
-            Some(Scatter {
-                scattered_ray,
-                attenuation,
-            })
-        }
+            // we refract
+            refracted_ray.unwrap()
+        };
+        let scattered_ray = Ray::new(rec.point(), ray_direction);
+        Some(Scatter {
+            scattered_ray,
+            attenuation,
+        })
     }
+}
+
+fn reflectance(cos_theta: f64, refraction_ratio: f64) -> f64 {
+    // Use Schlick's approximation
+    let r0 = ((1.0 - refraction_ratio) / (1.0 + refraction_ratio)).powi(2);
+    r0 + (1.0 - r0) * (1.0 - cos_theta).powi(5)
 }
 
 fn refract(unit_ray_direction: Vec3, normal: Vec3, refraction_ratio: f64) -> Option<Vec3> {
