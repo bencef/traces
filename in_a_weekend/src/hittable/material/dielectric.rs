@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
 
-use super::{Material, Scatter};
+use super::{reflect, Material, Scatter};
 
 pub struct Dielectric {
     refraction_index: f64,
@@ -37,8 +37,14 @@ impl Material for Dielectric {
                 attenuation,
             })
         } else {
-            // miss reflection
-            None
+            // Ray can only be reflected
+            let reflection = reflect(unit_ray_direction, rec.normal());
+            let scattered_ray = Ray::new(rec.point(), reflection);
+
+            Some(Scatter {
+                scattered_ray,
+                attenuation,
+            })
         }
     }
 }

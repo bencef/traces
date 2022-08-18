@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::{random_in_unit_sphere, Material, Scatter};
+use super::{Material, Scatter, random_in_unit_sphere, reflect};
 use crate::{color::Color, hittable::HitRecord, ray::Ray, v3::Vec3};
 
 pub struct Metal {
@@ -34,8 +34,4 @@ impl Material for Metal {
             None
         }
     }
-}
-
-fn reflect(incoming: Vec3, normal: Vec3) -> Vec3 {
-    incoming - normal.scale(2.0 * Vec3::dot(incoming, normal))
 }

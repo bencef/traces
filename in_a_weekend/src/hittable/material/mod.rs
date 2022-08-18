@@ -38,3 +38,7 @@ fn random_in_unit_sphere() -> Vec3 {
         }
     }
 }
+
+fn reflect(incoming: Vec3, normal: Vec3) -> Vec3 {
+    incoming - normal.scale(2.0 * Vec3::dot(incoming, normal))
+}
