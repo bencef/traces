@@ -27,24 +27,24 @@ impl Material for Dielectric {
         };
 
         let unit_ray_direction = ray.dir().normalized();
-
-        let refracted_ray = refract(unit_ray_direction, rec.normal(), refraction_ratio);
-        let cos_theta = Vec3::dot(ray.dir(), rec.normal().scale(-1.0)).min(1.0);
-        let ray_direction = if refracted_ray.is_none()
-            || reflectance(cos_theta, refraction_ratio) > rand::thread_rng().gen()
+        let ray_direction = match refract(unit_ray_direction, rec.normal(), refraction_ratio)
+            .filter(|_ray| !should_reflect(unit_ray_direction, rec.normal(), refraction_ratio))
         {
-            // we reflect
-            reflect(unit_ray_direction, rec.normal())
-        } else {
-            // we refract
-            refracted_ray.unwrap()
+            Some(refracted_ray) => refracted_ray,
+            None => reflect(unit_ray_direction, rec.normal()),
         };
+
         let scattered_ray = Ray::new(rec.point(), ray_direction);
         Some(Scatter {
             scattered_ray,
             attenuation,
         })
     }
+}
+
+fn should_reflect(ray_dir: Vec3, normal: Vec3, refraction_ratio: f64) -> bool {
+    let cos_theta = Vec3::dot(ray_dir, normal.scale(-1.0)).min(1.0);
+    reflectance(cos_theta, refraction_ratio) > rand::thread_rng().gen()
 }
 
 fn reflectance(cos_theta: f64, refraction_ratio: f64) -> f64 {
