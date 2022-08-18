@@ -151,9 +151,9 @@ fn main() -> std::io::Result<()> {
                 .write(true)
                 .truncate(true)
                 .open(out_file_name.clone())
-                .expect(&format!("Can't open file for writing: {}", out_file_name));
+                .unwrap_or_else(|_| panic!("Can't open file for writing: {}", out_file_name));
             ppm.write(&mut out_file, color_for_position)
-                .expect(&format!("Couldn't write PPM for: {}", out_file_name))
+                .unwrap_or_else(|_| panic!("Couldn't write PPM for: {}", out_file_name))
             // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
         });
     }

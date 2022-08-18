@@ -163,7 +163,7 @@ mod test {
     #[test]
     pub fn negates_add_up_to_zero() {
         let v = Vec3::new(1f64, 0f64, -1f64);
-        let v_neg = -v.clone();
+        let v_neg = -v;
         assert_eq!(v + v_neg, Vec3::zero());
     }
 
