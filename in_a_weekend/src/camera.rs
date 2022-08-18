@@ -1,6 +1,6 @@
 use crate::{p3::Point3, v3::Vec3};
 
-pub const ASPECT_RATIO: f64 = 16.0 / 9.0;
+pub const ASPECT_RATIO: f64 = 1.0;
 
 pub struct Camera {
     origin: Point3,

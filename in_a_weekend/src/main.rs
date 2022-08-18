@@ -12,7 +12,10 @@ use p3::Point3;
 use ppm::Ppm;
 use rand::Rng;
 use ray::Ray;
-use std::f64::INFINITY;
+use std::{
+    f64::{consts::PI, INFINITY},
+    rc::Rc,
+};
 use v3::Vec3;
 
 use crate::{
@@ -68,17 +71,11 @@ const MAX_DEPTH: usize = 50;
 #[cfg(debug_assertions)]
 const IMAGE_WIDTH: usize = 400;
 #[cfg(not(debug_assertions))]
-const IMAGE_WIDTH: usize = 1000;
+const IMAGE_WIDTH: usize = 1080;
 
 const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / camera::ASPECT_RATIO) as usize;
 
 fn main() -> std::io::Result<()> {
-    let camera = Camera::new(
-        Point3::new(0.0, 0.0, 1.0),
-        Point3::new(0.0, 0.0, -1.0),
-        Vec3::new(0.0, 1.0, 0.0),
-    );
-
     let mut world = HittableList::new();
     let matte_ground = Lambertian::new_rc(Color::rgb(0.8, 0.8, 0.0));
     let glass_center = Dielectric::new_rc(1.5);
@@ -113,19 +110,45 @@ fn main() -> std::io::Result<()> {
 
     eprintln!("Using samples per pixel: {}", SAMPLE_PER_PIXEL);
 
-    let color_for_position = move |Rect { width, height }| {
-        let mut rng = rand::thread_rng();
-        let mut color = Color::rgb(0.0, 0.0, 0.0);
-        for _sample_number in 1..SAMPLE_PER_PIXEL {
-            let u = (width as f64 + rng.gen::<f64>()) / (IMAGE_WIDTH - 1) as f64;
-            let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
-            let dir = camera.dir(u, v);
-            let r = Ray::new(camera.origin(), dir);
-            color += ray_color(&r, &world, MAX_DEPTH);
-        }
-        color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
-    };
-    ppm.write(&mut std::io::stdout(), color_for_position)
-    // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
-    // Ok(())
+    let camera_focus = Point3::new(0.0, 0.0, -1.0);
+    let cam_radius = 2.0;
+
+    const FPS: usize = 60;
+    const SCENE_LEN_SEC: usize = 3;
+    const FRAMES: usize = FPS * SCENE_LEN_SEC;
+
+    let world = Rc::new(world);
+
+    for frame in 0..FRAMES {
+        let tau = frame as f64 * 2.0 * PI / FRAMES as f64;
+        let origin = Point3::new(f64::sin(tau) * cam_radius, 0.0, f64::cos(tau) * cam_radius)
+            + camera_focus.into()
+            + Vec3::new(0.0, 0.5, 0.0);
+        let camera = Camera::new(origin, camera_focus, Vec3::new(0.0, 1.0, 0.0));
+
+        let world = world.clone();
+
+        let color_for_position = move |Rect { width, height }| {
+            let mut rng = rand::thread_rng();
+            let mut color = Color::rgb(0.0, 0.0, 0.0);
+            for _sample_number in 1..SAMPLE_PER_PIXEL {
+                let u = (width as f64 + rng.gen::<f64>()) / (IMAGE_WIDTH - 1) as f64;
+                let v = (height as f64 + rng.gen::<f64>()) / (IMAGE_HEIGHT - 1) as f64;
+                let dir = camera.dir(u, v);
+                let r = Ray::new(camera.origin(), dir);
+                color += ray_color(&r, &*world, MAX_DEPTH);
+            }
+            color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
+        };
+
+        let out_file_name = format!("out_{:05}.ppm", frame);
+        let mut out_file = std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(out_file_name)?;
+        ppm.write(&mut out_file, color_for_position)?
+        // eprintln!("{:?}", ray_color(&Ray::new(camera.origin(), camera.dir(0.5, 0.5)), &world, MAX_DEPTH));
+    }
+    Ok(())
 }
