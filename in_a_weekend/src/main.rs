@@ -55,13 +55,18 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: usize) -> Color {
     let mix_factor_sky_top = t;
     let sky_bottom_color = Color::rgb(1.0, 1.0, 1.0).into_gamma();
     let sky_top_color = Color::rgb(0.5, 0.7, 1.0).into_gamma();
-    mix_factor_sky_bottom * sky_bottom_color + mix_factor_sky_top * sky_top_color
+    let sky_color = mix_factor_sky_bottom * sky_bottom_color + mix_factor_sky_top * sky_top_color;
+    let scaled_sky = sky_color.scale(1.0/16.0);
+    let sun_color = Color::rgb(1.0, 1.0, 0.9);
+    let sun_dir = Vec3::new(1.0, 1.0, -1.0).normalized();
+    let mix_factor_sun = Vec3::dot(sun_dir, dir).max(0.0).powi(8);
+    sun_color.scale(mix_factor_sun) + scaled_sky
 }
 
 #[cfg(debug_assertions)]
 const SAMPLE_PER_PIXEL: usize = 10;
 #[cfg(not(debug_assertions))]
-const SAMPLE_PER_PIXEL: usize = 100;
+const SAMPLE_PER_PIXEL: usize = 2500;
 
 /// Number of ray bounces to calculate
 const MAX_DEPTH: usize = 50;
@@ -142,7 +147,7 @@ fn main() -> std::io::Result<()> {
                     let r = Ray::new(camera.origin(), dir);
                     color += ray_color(&r, &*world, MAX_DEPTH);
                 }
-                color.sampled(SAMPLE_PER_PIXEL).gamma_corrected()
+                color.sampled(SAMPLE_PER_PIXEL).scale(16.0).reinhard().gamma_corrected()
             };
 
             let out_file_name = format!("out_{:05}.ppm", frame);

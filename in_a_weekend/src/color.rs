@@ -50,6 +50,16 @@ impl Color {
         let b = self.b().powf(2.0);
         Self::rgb(r, g, b)
     }
+
+    pub fn reinhard(self) -> Self {
+        let r = self.r();
+        let g = self.g();
+        let b = self.b();
+        let r = r / (r + 1.0);
+        let g = g / (g + 1.0);
+        let b = b / (b + 1.0);
+        Self::rgb(r, g, b)
+    }
 }
 
 impl std::ops::Mul<Color> for f64 {
