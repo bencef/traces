@@ -4,3 +4,5 @@
 * About
 
 This is a repository for my experiments and exercises for learning about ray tracing
+
+[[example.webm]]
